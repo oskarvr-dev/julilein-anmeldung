@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>julilein – Bleib dabei</title>
+<meta name="robots" content="noindex">
+<style>
+/* ---------- Schrift ----------
+   Alegreya liegt lokal in fonts/ (kein Google-Server nötig, das ist datenschutzfreundlicher).
+   Fehlt die Datei, nimmt der Browser Georgia. */
+@font-face{font-family:"Alegreya";font-weight:400;font-style:normal;font-display:swap;
+  src:url("fonts/Alegreya-Regular.woff2") format("woff2")}
+@font-face{font-family:"Alegreya";font-weight:700;font-style:normal;font-display:swap;
+  src:url("fonts/Alegreya-Bold.woff2") format("woff2")}
+
+/* ---------- Farben (aus dem julilein-Logo, ungefähre Werte) ---------- */
+:root{
+  --marine:#0a1150;      /* großer Kreis im Logo */
+  --marine-2:#1c2a5e;    /* Band der Pins */
+  --rosa:#ecb3c8;        /* Hintergrund im Logo */
+  --rot:#e2001a;         /* roter Kreis im Logo */
+  --creme:#fff8f4;
+  --text:#14183a;
+  --fehler:#b00020;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh; min-height:100dvh;
+  font-family:"Alegreya",Georgia,"Times New Roman",serif;
+  font-size:19px; line-height:1.45; color:var(--text);
+  background:var(--marine); position:relative; overflow-x:hidden;
+}
+
+/* ---------- Dekoration: drei Kreise wie im Logo ---------- */
+.kreis{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.k-rosa{width:120vmax;height:120vmax;background:var(--rosa);right:-60vmax;top:-30vmax;opacity:.95}
+.k-rot{width:70vmax;height:70vmax;background:var(--rot);right:-35vmax;bottom:-30vmax}
+.k-marine{width:80vmax;height:80vmax;background:var(--marine);left:-48vmax;top:-12vmax}
+
+main{
+  position:relative; z-index:1; max-width:520px; margin:0 auto;
+  padding:28px 20px 40px; display:flex; flex-direction:column; align-items:center; gap:22px;
+  min-height:100vh; min-height:100dvh; justify-content:center;
+}
+.logo{width:116px;height:116px;border-radius:50%;box-shadow:0 6px 24px rgba(10,17,80,.35)}
+
+.karte{
+  width:100%; background:var(--creme); border-radius:22px; padding:28px 24px 24px;
+  box-shadow:0 18px 50px rgba(10,17,80,.35);
+}
+.label{
+  margin:0 0 6px; font-weight:700; font-size:13px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--rot);
+}
+h1{margin:0 0 8px; font-size:clamp(34px,9vw,46px); line-height:1.05; font-weight:700; color:var(--marine)}
+.unter{margin:0 0 22px}
+
+form{display:flex;flex-direction:column;gap:16px}
+.feld label{display:block;font-weight:700;margin-bottom:5px;color:var(--marine)}
+.feld input[type=text],.feld input[type=email]{
+  width:100%; font:inherit; font-size:18px; padding:13px 14px; color:var(--text);
+  background:#fff; border:2px solid #d9cfd0; border-radius:12px; outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.feld input:focus{border-color:var(--marine);box-shadow:0 0 0 4px rgba(10,17,80,.12)}
+.feld input[aria-invalid=true]{border-color:var(--fehler)}
+.fehlertext{color:var(--fehler);font-size:16px;margin-top:4px;min-height:0}
+
+.einwilligung{display:flex;gap:12px;align-items:flex-start;font-size:16px;line-height:1.4}
+.einwilligung input{
+  appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;margin:1px 0 0;
+  border:2px solid var(--marine);border-radius:7px;background:#fff;cursor:pointer;
+  display:grid;place-content:center;
+}
+.einwilligung input::after{
+  content:"";width:13px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;
+  transform:rotate(-45deg) scale(0);transition:transform .12s;margin-top:-3px;
+}
+.einwilligung input:checked{background:var(--marine)}
+.einwilligung input:checked::after{transform:rotate(-45deg) scale(1)}
+.einwilligung input:focus-visible{box-shadow:0 0 0 4px rgba(10,17,80,.2)}
+.einwilligung a{color:var(--marine)}
+
+button{
+  font:inherit; font-weight:700; font-size:20px; letter-spacing:.02em; cursor:pointer;
+  color:#fff; background:var(--rot); border:0; border-radius:999px; padding:15px 22px;
+  transition:transform .12s, background .15s, opacity .15s;
+}
+button:hover{background:#c40017}
+button:active{transform:scale(.98)}
+button:focus-visible{outline:3px solid var(--marine);outline-offset:3px}
+button[disabled]{opacity:.6;cursor:progress}
+
+.klein{margin:14px 0 0;font-size:14.5px;line-height:1.4;color:#4b4f6e}
+.klein a{color:var(--marine)}
+
+/* Honeypot: für Menschen unsichtbar, Bots füllen es aus */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* ---------- Erfolgsansicht ---------- */
+.danke{display:none;text-align:center;padding:10px 0 4px}
+.danke .haken{
+  width:72px;height:72px;border-radius:50%;background:var(--marine);margin:0 auto 14px;
+  display:grid;place-content:center;
+}
+.danke .haken::after{content:"";width:30px;height:15px;border-left:5px solid #fff;border-bottom:5px solid #fff;transform:rotate(-45deg);margin-top:-6px}
+.danke h2{margin:0 0 8px;font-size:34px;color:var(--marine)}
+.danke a.shop{
+  display:inline-block;margin-top:16px;color:var(--marine);font-weight:700;text-decoration:none;
+  border-bottom:2px solid var(--rot);
+}
+.karte.fertig form,.karte.fertig .kopf,.karte.fertig .klein{display:none}
+.karte.fertig .danke{display:block;animation:rein .35s ease-out}
+@keyframes rein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.fuss{color:#fff;font-size:15px;text-align:center;text-shadow:0 1px 8px rgba(10,17,80,.6)}
+.fuss a{color:#fff}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="kreis k-rosa"></div>
+<div class="kreis k-rot"></div>
+<div class="kreis k-marine"></div>
+
+<main>
+  <img class="logo" src="data:image/png;base64,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" alt="julilein Logo" width="116" height="116">
+
+  <section class="karte" id="karte">
+    <div class="kopf">
+      <p class="label">Ausstellung</p>
+      <h1>Bleib dabei</h1>
+      <p class="unter">Trag dich ein, dann laden wir dich zu den nächsten Ausstellungen von julilein ein.</p>
+    </div>
+
+    <form id="formular" novalidate>
+      <div class="feld">
+        <label for="vorname">Vorname</label>
+        <input type="text" id="vorname" name="vorname" autocomplete="given-name" maxlength="60">
+      </div>
+
+      <div class="feld">
+        <label for="email">E-Mail-Adresse</label>
+        <input type="email" id="email" name="email" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="email-fehler">
+        <div class="fehlertext" id="email-fehler" role="alert"></div>
+      </div>
+
+      <!-- Honeypot gegen Spam-Bots -->
+      <div class="hp" aria-hidden="true">
+        <label for="zusatz">Nicht ausfüllen</label>
+        <input type="text" id="zusatz" name="zusatz_info" tabindex="-1" autocomplete="off">
+      </div>
+
+      <label class="einwilligung">
+        <input type="checkbox" id="einwilligung" name="einwilligung" required>
+        <span>Ich möchte per E-Mail zu Ausstellungen von julilein eingeladen werden. Ich kann mich jederzeit abmelden.</span>
+      </label>
+      <div class="fehlertext" id="einwilligung-fehler" role="alert"></div>
+
+      <button type="submit" id="senden">Eintragen</button>
+    </form>
+
+    <p class="klein">
+      Deine Daten (Vorname und E-Mail) werden nur für Einladungen von julilein genutzt.
+      Mehr dazu in der <a href="#datenschutz">Datenschutzerklärung</a>. <!-- TODO: echten Link zur Datenschutzerklärung einsetzen -->
+    </p>
+
+    <div class="danke" id="danke" role="status" aria-live="polite">
+      <div class="haken"></div>
+      <h2>Danke<span id="danke-name"></span>!</h2>
+      <p>Du bist eingetragen. Wir melden uns bei der nächsten Ausstellung.</p>
+      <a class="shop" href="https://www.julilein.com">Zu julilein.com</a>
+    </div>
+  </section>
+
+  <p class="fuss"><a href="https://www.julilein.com">julilein.com</a></p>
+</main>
+
+<script>
+/* ---------- Einstellungen ----------
+   ENDPOINT = Adresse des Google-Skripts (kommt im nächsten Schritt).
+   Ist sie leer, wird NICHTS gespeichert (Testmodus). */
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbzcm4jvVHVaSPzte5fT4309Q9kYQ-sn-5FWjAGH0-DnJxOSS06FyGqrwffJuXl-e2gR/exec";
+
+const karte = document.getElementById("karte");
+const formular = document.getElementById("formular");
+const email = document.getElementById("email");
+const haken = document.getElementById("einwilligung");
+const senden = document.getElementById("senden");
+const emailFehler = document.getElementById("email-fehler");
+const einwFehler = document.getElementById("einwilligung-fehler");
+
+/* Einfache Prüfung: etwas@etwas.etwas */
+const emailOk = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
+
+formular.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  emailFehler.textContent = ""; einwFehler.textContent = "";
+  email.removeAttribute("aria-invalid");
+
+  const adresse = email.value.trim();
+  let ok = true;
+  if (!emailOk(adresse)) {
+    emailFehler.textContent = "Bitte gib eine gültige E-Mail-Adresse ein.";
+    email.setAttribute("aria-invalid", "true"); ok = false;
+  }
+  if (!haken.checked) {
+    einwFehler.textContent = "Bitte stimme zu, damit wir dir Einladungen schicken dürfen.";
+    ok = false;
+  }
+  if (!ok) { (emailFehler.textContent ? email : haken).focus(); return; }
+
+  /* Bot hat das versteckte Feld ausgefüllt: so tun, als wäre alles gut, aber nichts senden */
+  if (document.getElementById("zusatz").value) { zeigeDanke(""); return; }
+
+  const vorname = document.getElementById("vorname").value.trim();
+  senden.disabled = true; senden.textContent = "Moment …";
+
+  try {
+    if (ENDPOINT) {
+      const daten = new URLSearchParams({ vorname, email: adresse, einwilligung: "ja" });
+      /* no-cors: Google-Skripte erlauben keine Antwort an fremde Seiten; das Senden klappt trotzdem */
+      await fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: daten });
+    }
+    zeigeDanke(vorname);
+  } catch (err) {
+    senden.disabled = false; senden.textContent = "Eintragen";
+    emailFehler.textContent = "Das hat leider nicht geklappt. Bitte versuche es gleich noch einmal.";
+  }
+});
+
+function zeigeDanke(vorname) {
+  document.getElementById("danke-name").textContent = vorname ? ", " + vorname : "";
+  karte.classList.add("fertig");
+}
+</script>
+</body>
+</html>
